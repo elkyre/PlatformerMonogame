@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLATFORMER1", "PLATFORMER1\PLATFORMER1.csproj", "{278FD094-16B7-45C4-827C-837A697DA72A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLATFORMER1", "PLATFORMER1.csproj", "{278FD094-16B7-45C4-827C-837A697DA72A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {EAAB1631-66D2-46A8-BFAE-7CDEDF6E8B9D}
+		SolutionGuid = {42D836E9-4E4B-4502-8AC1-C3024EE744EB}
 	EndGlobalSection
 EndGlobal

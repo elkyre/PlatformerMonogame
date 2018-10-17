@@ -1,6 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
+using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Graphics;
+using MonoGame.Extended.ViewportAdapters;
+using System.Collections;
 
 namespace PLATFORMER1
 {
@@ -12,7 +17,18 @@ namespace PLATFORMER1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Player player = new Player();
+        Player player = new Player();   //create player class instance
+
+        Camera2D camera = null;
+        TiledMap map = null;
+        TiledMapRenderer mapRenderer = null;
+        TiledMapTileLayer collisionLayer;
+        public ArrayList allCollisionTiles = new ArrayList();
+        public Sprite[,] levelGrid;
+
+        public int tileHeight = 0;
+        public int levelTileWidth = 0;
+        public int levelTileHeight = 0;
 
         public Game1()
         {
@@ -42,7 +58,15 @@ namespace PLATFORMER1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player.Load(Content);
+            player.Load(Content, this);   //load playerclass
+
+            BoxingViewportAdapter viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+
+            camera = new Camera2D(viewportAdapter);
+            camera.Position = new Vector2(0, graphics.GraphicsDevice.Viewport.Height);
+
+            map = Content.Load<TiledMap>("level1");
+            mapRenderer = new TiledMapRenderer(GraphicsDevice);
         }
 
         /// <summary>
@@ -67,6 +91,8 @@ namespace PLATFORMER1
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             player.Update(deltaTime);
 
+            camera.Position = player.playerSprite.position - new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
+
             base.Update(gameTime);
         }
 
@@ -78,13 +104,34 @@ namespace PLATFORMER1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            var viewMatrix = camera.GetViewMatrix();
+            var projectionMatrix = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0f, -1f);
+
+            spriteBatch.Begin(transformMatrix: viewMatrix);
+
+            mapRenderer.Draw(map, ref viewMatrix, ref projectionMatrix);
 
             player.Draw(spriteBatch);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+    public void SetupTiles()
+        {
+            tileHeight = map.TileHeight;
+            levelTileHeight = map.Height;
+            levelTileWidth = map.Width;
+            levelGrid = new Sprite[levelTileWidth, levelTileHeight];
+
+            foreach (TiledMapTileLayer layer in map.TileLayers)
+            {
+                if (layer.Name == "collisions")
+                {
+                    collisionLayer = layer;
+                }
+            }
         }
     }
 }
