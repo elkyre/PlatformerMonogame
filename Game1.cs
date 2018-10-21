@@ -67,6 +67,8 @@ namespace PLATFORMER1
 
             map = Content.Load<TiledMap>("level1");
             mapRenderer = new TiledMapRenderer(GraphicsDevice);
+
+            SetupTiles();
         }
 
         /// <summary>
@@ -127,10 +129,39 @@ namespace PLATFORMER1
 
             foreach (TiledMapTileLayer layer in map.TileLayers)
             {
-                if (layer.Name == "collisions")
+                if (layer.Name == "Collisions")
                 {
                     collisionLayer = layer;
                 }
+            }
+
+            int columns = 0;
+            int rows = 0;
+            int loopCount = 0;
+
+            while(loopCount < collisionLayer.Tiles.Count)
+            {
+                if (collisionLayer.Tiles[loopCount].GlobalIdentifier != 0)
+                {
+                    Sprite tileSprite = new Sprite();
+                    tileSprite.position.X = columns * tileHeight;
+                    tileSprite.position.Y = rows * tileHeight;
+                    tileSprite.width = tileHeight;
+                    tileSprite.height = tileHeight;
+                    tileSprite.UpdateHitBox();
+                    allCollisionTiles.Add(tileSprite);
+                    levelGrid[columns, rows] = tileSprite;
+                }
+
+                columns++;
+
+                if (columns == levelTileWidth)
+                {
+                    columns = 0;
+                    rows++;
+                }
+
+                loopCount++;
             }
         }
     }
