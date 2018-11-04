@@ -21,7 +21,7 @@ namespace PLATFORMER1
 
         Player player = new Player();   //create player class instance
 
-        List<Enemy> enemies = new List<Enemy>();
+        public List<Enemy> enemies = new List<Enemy>();
         public Chest goal = null;
 
         Camera2D camera = null;
@@ -119,6 +119,8 @@ namespace PLATFORMER1
                 enemy.Update(deltaTime);
             }
 
+            goal.Update(deltaTime);
+
             camera.Position = player.playerSprite.position - new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
 
             base.Update(gameTime);
@@ -140,13 +142,12 @@ namespace PLATFORMER1
             mapRenderer.Draw(map, ref viewMatrix, ref projectionMatrix);
 
             player.Draw(spriteBatch);
+            goal.Draw(spriteBatch);
 
             foreach(Enemy enemy in enemies)
             {
                 enemy.Draw(spriteBatch);
             }
-
-            goal.Draw(spriteBatch);
 
             spriteBatch.End();
 

@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PLATFORMER1
 {
-    class Player
+    public class Player
     {
         public Sprite playerSprite = new Sprite();
 
@@ -56,6 +56,16 @@ namespace PLATFORMER1
             UpdateInput(deltaTime);
             playerSprite.Update(deltaTime);
             playerSprite.UpdateHitBox();
+
+            if (collision.IsColliding(playerSprite, game.goal.chestSprite))
+            {
+                game.Exit();
+            }
+
+            for (int i = 0; i < game.enemies.Count; i++)
+            {
+                playerSprite = collision.CollideWithMonster(this, game.enemies[i], deltaTime, game);
+            }
         }
 
         public void Draw (SpriteBatch spriteBatch)
@@ -99,8 +109,10 @@ namespace PLATFORMER1
                 playerSprite.Pause();
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) == true)
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) == true && playerSprite.canJump == true)
             {
+                playerSprite.canJump = false;
+                localAcceleration.Y -= jumpStrength;
                 jumpSoundInstance.Play();
             }
 
@@ -113,6 +125,16 @@ namespace PLATFORMER1
             else if (playerSprite.velocity.X < -maxRunSpeed)
             {
                 playerSprite.velocity.X = -maxRunSpeed;
+            }
+
+            if (wasMovingLeft && (playerSprite.velocity.X > 0) || wasMovingRight && (playerSprite.velocity.X < 0))
+            {
+                playerSprite.velocity.X = 0;
+            }
+
+            if (playerSprite.velocity.Y > terminalVelocity)
+            {
+                playerSprite.velocity.Y = terminalVelocity;
             }
 
             playerSprite.position += playerSprite.velocity * deltaTime;

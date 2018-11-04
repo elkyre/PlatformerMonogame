@@ -13,7 +13,7 @@ namespace PLATFORMER1
 
         public bool IsColliding(Sprite hero, Sprite otherSprite)
         {
-            if(hero.rightEdge < otherSprite.leftEdge ||
+            if (hero.rightEdge < otherSprite.leftEdge ||
                hero.leftEdge > otherSprite.rightEdge ||
                hero.bottomEdge < otherSprite.topEdge ||
                hero.topEdge > otherSprite.bottomEdge)
@@ -47,7 +47,7 @@ namespace PLATFORMER1
             Vector2 bottomLeftTile = new Vector2(playerTile.X - 1, playerTile.Y +1);
             Vector2 bottomRightTile = new Vector2(playerTile.X + 1, playerTile.Y + 1);
             Vector2 topLeftTile = new Vector2(playerTile.X - 1, playerTile.Y - 1);
-            Vector2 topRightTile = new Vector2(playerTile.X + 1, playerTile.Y + 1);
+            Vector2 topRightTile = new Vector2(playerTile.X + 1, playerTile.Y - 1);
 
             bool leftCheck = CheckForTile(game, leftTile);
             bool rightCheck = CheckForTile(game, rightTile);
@@ -173,6 +173,8 @@ namespace PLATFORMER1
             {
                 hero.position.Y = tile.topEdge - hero.height + hero.offset.Y;
                 hero.velocity.Y = 0;
+
+                hero.canJump = true;
             }
 
             return hero;
@@ -192,6 +194,7 @@ namespace PLATFORMER1
                 {
                     hero.position.Y = tile.topEdge - hero.height + hero.offset.Y;
                     hero.velocity.Y = 0;
+                    hero.canJump = true;
                 }
                 else if (rightEdgeDistance < leftEdgeDistance)
                 {
@@ -229,6 +232,38 @@ namespace PLATFORMER1
                 }
             }
             return hero;
+        }
+
+        public Sprite CollideWithMonster (Player hero, Enemy monster, float deltaTime, Game1 theGame)
+        {
+            Sprite playerPrediction = new Sprite();
+            playerPrediction.position = hero.playerSprite.position;
+            playerPrediction.width = hero.playerSprite.width;
+            playerPrediction.height = hero.playerSprite.height;
+            playerPrediction.offset = hero.playerSprite.offset;
+            playerPrediction.UpdateHitBox();
+
+            playerPrediction.position += hero.playerSprite.velocity * deltaTime;
+
+            if (IsColliding(playerPrediction, monster.enemySprite))
+            {
+                int leftEdgeDistance = Math.Abs(monster.enemySprite.leftEdge - playerPrediction.rightEdge);
+                int rightEdgeDistance = Math.Abs(monster.enemySprite.rightEdge - playerPrediction.leftEdge);
+                int topEdgeDistance = Math.Abs(monster.enemySprite.topEdge - playerPrediction.bottomEdge);
+                int bottomEdgeDistance = Math.Abs(monster.enemySprite.bottomEdge - playerPrediction.topEdge);
+
+                if (topEdgeDistance < leftEdgeDistance && topEdgeDistance < rightEdgeDistance && topEdgeDistance < bottomEdgeDistance)
+                {
+                    theGame.enemies.Remove(monster);
+                    hero.playerSprite.velocity.Y -= hero.jumpStrength * deltaTime;
+                    hero.playerSprite.canJump = false;
+                }
+                else
+                {
+                    theGame.Exit();
+                }
+            }
+            return hero.playerSprite;
         }
 
     }

@@ -15,6 +15,8 @@ namespace PLATFORMER1
         public Vector2 velocity = Vector2.Zero;
         public Vector2 offset = Vector2.Zero;
 
+        public bool canJump = false;
+
         Texture2D texture;
 
         public int width = 0;
@@ -51,9 +53,9 @@ namespace PLATFORMER1
 
         public void UpdateHitBox()
         {
-            leftEdge = (int)position.X - (int)offset.X;
+            leftEdge = (int)position.X - (int) offset.X;
             rightEdge = leftEdge + width;
-            topEdge = (int)position.Y - (int)offset.Y;
+            topEdge = (int)position.Y - (int) offset.Y;
             bottomEdge = topEdge + height;
         }
 
